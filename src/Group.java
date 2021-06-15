@@ -52,16 +52,43 @@ public class Group {
         }
     }
 
+    public double[] calFinalResult(){
+
+        Object[] eachStep;
+        double[] finalresult = new double[fullNameList.size()];
+        for(Activity act : activitiesList.values()) {
+//            System.out.println(act.calResult());  // "!!!" do not print arrayList in this method
+            eachStep = act.calResult().toArray();
+
+            for(int i = 0 ; i<fullNameList.size(); i++){
+                finalresult[i] += (double)eachStep[i];
+            }
+        }
+        for (double d : finalresult){
+            System.out.println(d);
+        }
+        return finalresult;
+    }
+
     public static void main(String[] args) {
         Group ChiFan  = new Group("mike,rick,tom,mary,watson");
         ChiFan.addActivity("ChiShi" , "mike,tom,mary");
-        System.out.println(ChiFan.fullNameList);
-        System.out.println(ChiFan.activitiesList.get("ChiShi").paid);
+//        System.out.println(ChiFan.fullNameList);
+//        System.out.println(ChiFan.activitiesList.get("ChiShi").paid);
 
         ChiFan.addPerson("andy,sara");
-        System.out.println(ChiFan.activitiesList.get("ChiShi").fullNameList);
-        System.out.println(ChiFan.activitiesList.get("ChiShi").paid);
+//        System.out.println(ChiFan.activitiesList.get("ChiShi").fullNameList);
+//        System.out.println(ChiFan.activitiesList.get("ChiShi").paid);
+        ChiFan.activitiesList.get("ChiShi").setFirstPaid("mike:1000,mary:50");
+//        ChiFan.calFinalResult();
+        ChiFan.addActivity("lalal" , "mike,tom,watson,rick");
+        ChiFan.activitiesList.get("lalal").setFirstPaid("tom:10,watson:80");
+        ChiFan.calFinalResult();
+
+
+//        System.out.println(ChiFan.activitiesList.get("lalal").totalMoney);
+
+//        ChiFan.fullPersonList.get(2).remind("給錢");
 
     }
-
 }

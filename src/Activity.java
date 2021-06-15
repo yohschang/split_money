@@ -20,12 +20,9 @@ public class Activity extends Group{
     private Calendar calendar;
     private String location;
     public ArrayList<Double> paid = new ArrayList<Double>();
-    private ArrayList<Double> weighted = new ArrayList<Double>(); // for uneven split
-
-    private int totalMoney;
-    private int totalPerson;
-
-
+    public ArrayList<Double> weighted = new ArrayList<Double>(); // for uneven split
+    public int totalMoney;
+    public int totalPerson;
 
 
     //basic mode
@@ -107,6 +104,7 @@ public class Activity extends Group{
 
     }
 
+
     // if person list change in group, each activity should be update
     public void update(){
         int lenDiff = fullNameList.size() - paid.size();
@@ -118,17 +116,23 @@ public class Activity extends Group{
         }
     }
 
-
     public ArrayList<Double> calResult(){
         double totalWeight = 0;
         for(double w : weighted){
             if (w != inf){totalWeight += w;}
         }
         double eachPiece = totalMoney/totalWeight;
+//        System.out.println(eachPiece);
         for(int i = 0 ; i < fullNameList.size() ; i++){
             if(paid.get(i) != inf){
-            paid.set(i , eachPiece * weighted.get(i));}
+            double firstpay = paid.get(i);
+            paid.set(i , firstpay -  eachPiece * weighted.get(i));}
+            else{
+                paid.set(i , 0.0);
+            }
         }
+
+
         return paid;
     }
 
@@ -137,6 +141,7 @@ public class Activity extends Group{
         Activity activity = new Activity(g , "poop" , "amy,mike");
         System.out.println("full person list : " + activity.fullNameList);
         System.out.println("paid list : " + activity.paid);
+
         activity.setFirstPaid("amy:100,mike:200");
         System.out.println("paid list : " + activity.paid);
         activity.addPerson("rick");
