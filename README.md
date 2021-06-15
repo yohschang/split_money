@@ -19,5 +19,8 @@ input form : name1:value1,name2:value2,......
 set the person that has different weighted
 input form : name1:weighted1,name2:weighted2,......
 
+## update
+update paid list and weighted list if group has add people
+
 ### calResult 
 return the splited result of this activity 
