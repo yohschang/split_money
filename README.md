@@ -24,3 +24,14 @@ update paid list and weighted list if group has add people
 
 ### calResult 
 return the splited result of this activity 
+
+
+## Group.java
+### addActivity(String ActivityName,  String names)
+basic type of adding activity
+
+### addActivity(tags tag , int money)
+fast type of adding activity
+
+### addPerson
+add people to the group and all the namelist in the activity will be update
