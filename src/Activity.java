@@ -19,7 +19,7 @@ public class Activity extends Group{
     private int classes;
     private Calendar calendar;
     private String location;
-    private ArrayList<Double> paid = new ArrayList<Double>();
+    public ArrayList<Double> paid = new ArrayList<Double>();
     private ArrayList<Double> weighted = new ArrayList<Double>(); // for uneven split
 
     private int totalMoney;
@@ -64,6 +64,7 @@ public class Activity extends Group{
     }
 
     public void addPerson(String names){
+        System.out.println(fullNameList);
         List<String> nameList = Arrays.asList(names.split(","));
         totalPerson += nameList.size();
         for(String n : nameList){checkPerson(n);}
@@ -104,6 +105,17 @@ public class Activity extends Group{
             weighted.set(idx , Double.parseDouble(nv.split(":")[1]));
         }
 
+    }
+
+    // if person list change in group, each activity should be update
+    public void update(){
+        int lenDiff = fullNameList.size() - paid.size();
+        if (lenDiff != 0 ){
+            for(int i =0; i<lenDiff; i++) {
+                paid.add(inf);
+                weighted.add(inf);
+            }
+        }
     }
 
 
