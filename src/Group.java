@@ -1,3 +1,4 @@
+import java.io.*;
 import java.util.*;
 
 public class Group {
@@ -8,6 +9,8 @@ public class Group {
     ArrayList<String> fullNameList = new ArrayList<String>(); // store all person name
     HashMap<String,Activity> activitiesList = new HashMap<String , Activity>();
     int currentFastActivity = 0;
+    String StringResult;
+    String StringName;
 
     public Group(){}
 
@@ -52,7 +55,7 @@ public class Group {
         }
     }
 
-    public double[] calFinalResult(){
+    public double[] calFinalResult() throws IOException {
 
         Object[] eachStep;
         double[] finalresult = new double[fullNameList.size()];
@@ -64,31 +67,43 @@ public class Group {
                 finalresult[i] += (double)eachStep[i];
             }
         }
-        for (double d : finalresult){
-            System.out.println(d);
+//        for (double d : finalresult){
+        for (int d = 0; d < finalresult.length; d++){
+            if (d == 0){
+                StringResult = String.valueOf(finalresult[d]);
+                StringName = String.valueOf(fullNameList.get(d));
+            }
+            else {
+                StringResult += String.valueOf(finalresult[d]);
+                StringName += String.valueOf(fullNameList.get(d));
+            }
+            StringResult += ",";
+            StringName += ",";
         }
+        split_money(StringResult , StringName);
         return finalresult;
     }
 
-    public static void main(String[] args) {
+    public void split_money(String finalResult , String Names) throws IOException {
+        String command = "python min_split.py " + finalResult + " " + Names;
+        Process p = Runtime.getRuntime().exec(command);
+        BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
+
+        String line;
+        while ((line = in.readLine()) != null) {
+            System.out.println(line );
+        }
+    }
+
+    public static void main(String[] args) throws IOException {
         Group ChiFan  = new Group("mike,rick,tom,mary,watson");
         ChiFan.addActivity("ChiShi" , "mike,tom,mary");
-//        System.out.println(ChiFan.fullNameList);
-//        System.out.println(ChiFan.activitiesList.get("ChiShi").paid);
-
         ChiFan.addPerson("andy,sara");
-//        System.out.println(ChiFan.activitiesList.get("ChiShi").fullNameList);
-//        System.out.println(ChiFan.activitiesList.get("ChiShi").paid);
         ChiFan.activitiesList.get("ChiShi").setFirstPaid("mike:1000,mary:50");
-//        ChiFan.calFinalResult();
         ChiFan.addActivity("lalal" , "mike,tom,watson,rick");
         ChiFan.activitiesList.get("lalal").setFirstPaid("tom:10,watson:80");
         ChiFan.calFinalResult();
 
-
-//        System.out.println(ChiFan.activitiesList.get("lalal").totalMoney);
-
-//        ChiFan.fullPersonList.get(2).remind("給錢");
 
     }
 }
