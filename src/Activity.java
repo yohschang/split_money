@@ -131,8 +131,6 @@ public class Activity extends Group{
                 paid.set(i , 0.0);
             }
         }
-
-
         return paid;
     }
 

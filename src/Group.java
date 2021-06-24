@@ -55,7 +55,7 @@ public class Group {
         }
     }
 
-    public double[] calFinalResult() throws IOException {
+    public ArrayList<String> calFinalResult() throws IOException {
 
         Object[] eachStep;
         double[] finalresult = new double[fullNameList.size()];
@@ -80,19 +80,24 @@ public class Group {
             StringResult += ",";
             StringName += ",";
         }
-        split_money(StringResult , StringName);
-        return finalresult;
+        ArrayList<String> splittext = split_money(StringResult , StringName);
+//        return finalresult;
+        return splittext;
     }
 
-    public void split_money(String finalResult , String Names) throws IOException {
+    public ArrayList<String> split_money(String finalResult , String Names) throws IOException {
+        ArrayList<String> splitText = new ArrayList<String>();
         String command = "python min_split.py " + finalResult + " " + Names;
         Process p = Runtime.getRuntime().exec(command);
         BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
 
         String line;
         while ((line = in.readLine()) != null) {
-            System.out.println(line );
+//            System.out.println(line );
+            splitText.add(line);
         }
+
+        return splitText;
     }
 
     public static void main(String[] args) throws IOException {
@@ -102,8 +107,11 @@ public class Group {
         ChiFan.activitiesList.get("ChiShi").setFirstPaid("mike:1000,mary:50");
         ChiFan.addActivity("lalal" , "mike,tom,watson,rick");
         ChiFan.activitiesList.get("lalal").setFirstPaid("tom:10,watson:80");
-        ChiFan.calFinalResult();
+        ArrayList<String> splittext = ChiFan.calFinalResult();
+        for (String s : splittext){
+            System.out.println(s);
+        }
 
-
+        ChiFan.fullPersonList.get(0).remind("123");
     }
 }

@@ -26,7 +26,6 @@ print(name)
 # moneys = np.array([-100,63,28,-45,234,-132,-48])
 # moneys = np.array([8 , -4,-5,7,-6,10,-1 ,-11,7,4,-5,3,8,-15,11,7,-9 ,-9 ])
 # moneys = np.array([8 , -4,-5,7,-6,3,-3 ])
-
 # name = np.arange(len(moneys))
 
 pos = moneys[moneys>=0]
