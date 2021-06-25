@@ -1,6 +1,6 @@
 # split_money
 
-## User cmd interface
+## Command-Line Interface interface
 ![](https://i.imgur.com/TAyrF84.png)
 
 ## Activity.java
