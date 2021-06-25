@@ -1,5 +1,7 @@
 import javax.xml.transform.stax.StAXResult;
 import java.awt.*;
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -13,9 +15,9 @@ enum tags{
     entertainment;
 }
 
-
-public class Activity extends Group{
-    private String ActivityName;
+public class Activity extends Group implements Serializable {
+    private static final long serialVersionUID = 7095158835028304130L;
+    public String ActivityName;
     private int classes;
     private Calendar calendar;
     private String location;
@@ -116,8 +118,9 @@ public class Activity extends Group{
         }
     }
 
-    public ArrayList<Double> calResult(){
+    public double[] calResult(){
         double totalWeight = 0;
+        double[] outpaid = new double[paid.size()];
         for(double w : weighted){
             if (w != inf){totalWeight += w;}
         }
@@ -131,11 +134,12 @@ public class Activity extends Group{
                 paid.set(i , 0.0);
             }
         }
-        return paid;
+        for(int i = 0 ; i < paid.size(); i++){outpaid[i] = paid.get(i);}
+        return outpaid;
     }
 
-    public static void main(String[] args) {
-        Group g = new Group("mike,john,rick,amy,google");
+    public static void main(String[] args) throws IOException {
+        Group g = new Group("mike,john,rick,amy,google","gogo");
         Activity activity = new Activity(g , "poop" , "amy,mike");
         System.out.println("full person list : " + activity.fullNameList);
         System.out.println("paid list : " + activity.paid);
@@ -152,8 +156,16 @@ public class Activity extends Group{
         activity.calResult();
         System.out.println("calculate result : " +  activity.paid);
 
-        Activity fastActivity = new Activity(g , tags.food , 1000);
+        System.out.println(g.activitiesList.keySet());
+
+        ArrayList<String> splittext2 = g.calFinalResult();
+        for (String s : splittext2){
+            System.out.println(s);
+        }
+//        Activity fastActivity = new Activity(g , tags.food , 1000);
 
     }
 
 }
+
+
