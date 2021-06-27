@@ -11,6 +11,14 @@ public class User implements Serializable {
     String currentUser;
     database db = new database();
 
+    /**
+     * get the group list of login user and enter for further purpose
+     * if input string has group name inside , then create a new group with given name
+     * @param id : user name
+     * @return
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     public Group getUserGroup(String id ) throws IOException, ClassNotFoundException {
         currentUser = id;
         ArrayList<String> info =  db.getTable(id);
@@ -32,11 +40,24 @@ public class User implements Serializable {
         return currentGroup;
     }
 
+    /**
+     * get the list of group the user join from data base
+     * @param id
+     * @param groupname
+     * @return
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     public Group getUserGroup(String id, String groupname) throws IOException, ClassNotFoundException {
         currentGroup = new Group(id, groupname);
         return currentGroup;
     }
 
+    /**
+     * save group as object file
+     * @param savegroup
+     * @throws IOException
+     */
     public static void saveGroup(Group savegroup) throws IOException {
         String fileName = "Group";
         FileOutputStream fos = new FileOutputStream(fileName+ "\\" + savegroup.groupName);
@@ -44,6 +65,14 @@ public class User implements Serializable {
         oos.writeObject(savegroup);
         oos.close();
     }
+
+    /**
+     * read the exit group
+     * @param groupname
+     * @return
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     public static Group readGroup(String groupname) throws IOException, ClassNotFoundException {
         System.out.println();
         String fileName = "Group";
@@ -55,7 +84,46 @@ public class User implements Serializable {
         return currentGroup;
     }
 
+    /**
+     * all the cmd of this app (type help to see)
+     */
+    public void cmdlist(){
+        System.out.println(
+        "////Group command\n"+
+        "add $namelist                             Add people to group\n"+
+        "addActivity $activity name $namelist      Basic build activity\n"+
+        "addActivityf $activity tag $money         Fast build activity\n"+
+        "back                                      Back to Group choosing\n"+
+        "calfinal                                  Calculate final result in this group\n"+
+        "clear                                     Clear current reminder\n"+
+        "getactivity                               Get all activity name in group\n"+
+        "remind $target name $message              Send reminder to target person\n"+
+        "toActivity $activity name                 Change directory to activity\n"+
+        "////Activity command\n"+
+        "add $namelist                             add people to activity\n"+
+        "back                                      back to group girectory\n"+
+        "setpaid $name and paid list               set who paid first\n"+
+        "setweight $name and weight list           set split weight of each person\n"+
+        "calresult                                 calculate result in activity\n"+
 
+        "////Global command\n"+
+        "exit                                      exit program\n"+
+        "$name                                     login person group list\n"+
+        "$name $groupname                          login and creat group\n"
+        );
+    }
+
+
+    /**
+     * the command line interface for use to use this splitting software
+     * include group layer, activity layer and global layer
+     * @param cmds
+     * @param pos
+     * @return
+     * @throws IOException
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
     public String runcmd(String cmds, String pos) throws IOException, SQLException, ClassNotFoundException {
         String[] cmdlist = cmds.split(" ");
         String cmd = cmdlist[0];
@@ -105,6 +173,9 @@ public class User implements Serializable {
                 case "getactivity" :
                     System.out.println(currentGroup.activitiesList.keySet());
                     break;
+                case "info":
+                    currentGroup.info();
+                    break;
                 default:
                     System.out.println("wrong cmd");
             }
@@ -116,6 +187,8 @@ public class User implements Serializable {
                 case "add" : currentActivity.addPerson(arg.get(0)); break;
                 case "setpaid" : currentActivity.setFirstPaid(arg.get(0)); break;
                 case "setweight" : currentActivity.setWeighted(arg.get(0)); break;
+                case "calresult" : currentActivity.calResult(); break;
+                case "info" : currentActivity.getinfo(); break;
                 default:
                     System.out.println("wrong cmd");
             }
@@ -145,6 +218,9 @@ public class User implements Serializable {
             if (cmd.equals("exit")){
                 System.exit(0);
                 saveGroup(user.currentGroup);}
+            else if (cmd.equals("help")){
+                user.cmdlist();
+            }
 
             pos = user.runcmd(cmd , pos);
             System.out.println("  ");

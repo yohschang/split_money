@@ -1,3 +1,5 @@
+import com.sun.security.jgss.GSSUtil;
+
 import java.io.*;
 import java.util.*;
 
@@ -18,6 +20,11 @@ public class Group implements Serializable {
 
     public Group(){}
 
+    /**
+     * build group
+     * @param personlist name1,name2,name3,............
+     * @param groupName
+     */
     public Group(String personlist , String groupName){
         this.groupName = groupName;
         String[] namelist = personlist.split(",");
@@ -34,12 +41,24 @@ public class Group implements Serializable {
     }
 
     //basic add
+
+    /**
+     * basic create activity method
+     * @param ActivityName
+     * @param names
+     */
     public void addActivity(String ActivityName,  String names){
         Activity newactivity = new Activity(this , ActivityName , names);
         activitiesList.put(ActivityName , newactivity);
 
     }
     //fast add
+
+    /**
+     * fast create activity method
+     * @param tag
+     * @param money
+     */
     public void addActivity(tags tag , int money){
         Activity newactivity = new Activity(this , tag , money);
         activitiesList.put( "fastMode" + currentFastActivity , newactivity);
@@ -47,6 +66,10 @@ public class Group implements Serializable {
     }
 
 
+    /**
+     * add person to current group, the activity inside this group will update spontaneously
+     * @param personlist
+     */
     public void addPerson(String personlist){
         String[] namelist = personlist.split(",");
         for(String name:namelist) {
@@ -60,6 +83,11 @@ public class Group implements Serializable {
         }
     }
 
+    /**
+     * calculate the final result of each person in this group
+     * @return
+     * @throws IOException
+     */
     public ArrayList<String> calFinalResult() throws IOException {
 
         double[] eachStep;
@@ -91,6 +119,13 @@ public class Group implements Serializable {
         return splittext;
     }
 
+    /**
+     * the algorithm of splitting, here we use python to develop and will return the pair of money flow
+     * @param finalResult
+     * @param Names
+     * @return
+     * @throws IOException
+     */
     public ArrayList<String> split_money(String finalResult , String Names) throws IOException {
         String command = "python min_split.py " + finalResult + " " + Names;
         Process p = Runtime.getRuntime().exec(command);
@@ -105,12 +140,22 @@ public class Group implements Serializable {
         return splitText;
     }
 
+    /**
+     * save group object
+     * @param savegroup
+     * @throws IOException
+     */
     public static void saveGroup(Group savegroup) throws IOException {
         String fileName = "Group";
         FileOutputStream fos = new FileOutputStream(fileName+ "\\" + savegroup.groupName);
         ObjectOutputStream oos = new ObjectOutputStream(fos);
         oos.writeObject(savegroup);
         oos.close();
+    }
+
+    public void info(){
+        System.out.println("people in this group : " + fullNameList);
+        System.out.println("activities in this group : " + activitiesList.keySet());
     }
 
     public static void main(String[] args) throws IOException {
@@ -124,18 +169,18 @@ public class Group implements Serializable {
         for (String s : splittext){
             System.out.println(s);
         }
-        saveGroup(Havefun);
-
-        Group TaipeiTrip  = new Group("mike,rick,andy,mary,nick,sara" ,"TaipeiTrip");
-        TaipeiTrip.addActivity("taxi" , "mike,andy,mary,nick");
-        TaipeiTrip.activitiesList.get("taxi").setFirstPaid("mike:1000,mary:200,nick:50");
-        TaipeiTrip.addActivity("hotel" , "mike,rick,andy,mary,nick,sara");
-        TaipeiTrip.activitiesList.get("hotel").setFirstPaid("mary:2300,sara:1200");
-        ArrayList<String> splittext2 = TaipeiTrip.calFinalResult();
-        for (String s : splittext2){
-            System.out.println(s);
-        }
-        saveGroup(TaipeiTrip);
+//        saveGroup(Havefun);
+//
+//        Group TaipeiTrip  = new Group("mike,rick,andy,mary,nick,sara" ,"TaipeiTrip");
+//        TaipeiTrip.addActivity("taxi" , "mike,andy,mary,nick");
+//        TaipeiTrip.activitiesList.get("taxi").setFirstPaid("mike:1000,mary:200,nick:50");
+//        TaipeiTrip.addActivity("hotel" , "mike,rick,andy,mary,nick,sara");
+//        TaipeiTrip.activitiesList.get("hotel").setFirstPaid("mary:2300,sara:1200");
+//        ArrayList<String> splittext2 = TaipeiTrip.calFinalResult();
+//        for (String s : splittext2){
+//            System.out.println(s);
+//        }
+//        saveGroup(TaipeiTrip);
 
 //        ChiFan.fullPersonList.get(0).remind("123");
     }

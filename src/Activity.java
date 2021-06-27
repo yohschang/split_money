@@ -29,7 +29,7 @@ public class Activity extends Group implements Serializable {
 
     //basic mode
     /**
-     *
+     * basic build activity method, need name list and activity name
      * @param ActivityName
      * @param names : name1,name2,name3,............
      */
@@ -51,6 +51,13 @@ public class Activity extends Group implements Serializable {
     }
 
     //fast mode
+
+    /**
+     * fast build activity method, only need the tag of activity and total money
+     * @param g
+     * @param tag : enum "tags"
+     * @param money
+     */
     public Activity(Group g, tags tag , int money){
         super(g);
         totalMoney = money;
@@ -62,8 +69,12 @@ public class Activity extends Group implements Serializable {
         System.out.println("remember to fill the information");
     }
 
+    /**
+     * the method to add people in this Group to the activity already built
+     * @param names :name1,name2,name3,............
+     */
     public void addPerson(String names){
-        System.out.println(fullNameList);
+//        System.out.println(fullNameList);
         List<String> nameList = Arrays.asList(names.split(","));
         totalPerson += nameList.size();
         for(String n : nameList){checkPerson(n);}
@@ -96,6 +107,10 @@ public class Activity extends Group implements Serializable {
         }
     }
 
+    /**
+     * change the weight of someone, the default weight of people who join this activity is 1
+     * @param NameAndWeighted :　name1:weighted1,name2:weighted2,.......
+     */
     public void setWeighted(String NameAndWeighted){
 //        ArrayList<String> names = new  ArrayList<String>();
         for (String nv : NameAndWeighted.split(",")){
@@ -106,8 +121,10 @@ public class Activity extends Group implements Serializable {
 
     }
 
-
-    // if person list change in group, each activity should be update
+    /**
+     * if person list change in group, each activity should be update
+     * this method will be called in class Group automatically
+     */
     public void update(){
         int lenDiff = fullNameList.size() - paid.size();
         if (lenDiff != 0 ){
@@ -118,6 +135,21 @@ public class Activity extends Group implements Serializable {
         }
     }
 
+    /**
+     * get the information of this activity, include person list, money list, weighted list, split result
+     */
+    public void getinfo(){
+        System.out.println("full person list : " + fullNameList);
+        System.out.println("current total money : " + totalMoney);
+        System.out.println("weight list : "+ weighted);
+        System.out.println("calculate result : " +  paid);
+    }
+
+    /**
+     * calculate the splitting result in current group, the final money for each already minus the money
+     * if he has paid first
+     * @return
+     */
     public double[] calResult(){
         double totalWeight = 0;
         double[] outpaid = new double[paid.size()];
@@ -135,33 +167,35 @@ public class Activity extends Group implements Serializable {
             }
         }
         for(int i = 0 ; i < paid.size(); i++){outpaid[i] = paid.get(i);}
+
         return outpaid;
     }
 
     public static void main(String[] args) throws IOException {
         Group g = new Group("mike,john,rick,amy,google","gogo");
-        Activity activity = new Activity(g , "poop" , "amy,mike");
+        Activity activity = new Activity(g , "lunch" , "amy,mike");
         System.out.println("full person list : " + activity.fullNameList);
-        System.out.println("paid list : " + activity.paid);
+//        System.out.println("paid list : " + activity.paid);
 
         activity.setFirstPaid("amy:100,mike:200");
-        System.out.println("paid list : " + activity.paid);
+//        System.out.println("paid list : " + activity.paid);
+
         activity.addPerson("rick");
+//        System.out.println("paid list : " + activity.paid);
+//        activity.setFirstPaid("rick:50");
         System.out.println("paid list : " + activity.paid);
-        activity.setFirstPaid("rick:50");
-        System.out.println("paid list : " + activity.paid);
-        System.out.println("total money : " + activity.totalMoney);
+//        System.out.println("total money : " + activity.totalMoney);
         activity.setWeighted("amy:3");
         System.out.println("weight list : "+ activity.weighted);
         activity.calResult();
         System.out.println("calculate result : " +  activity.paid);
 
-        System.out.println(g.activitiesList.keySet());
-
-        ArrayList<String> splittext2 = g.calFinalResult();
-        for (String s : splittext2){
-            System.out.println(s);
-        }
+//        System.out.println(g.activitiesList.keySet());
+//
+//        ArrayList<String> splittext2 = g.calFinalResult();
+//        for (String s : splittext2){
+//            System.out.println(s);
+//        }
 //        Activity fastActivity = new Activity(g , tags.food , 1000);
 
     }

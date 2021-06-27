@@ -2,9 +2,11 @@ import java.sql.*;
 import java.sql.DriverManager;
 import java.util.ArrayList;
 
+
+/**
+ * use SQLite to create local database
+ */
 public class database {
-
-
     public void buiddb(){
         Connection c = null;
         try {
@@ -17,6 +19,9 @@ public class database {
         System.out.println("Opened database successfully");
     }
 
+    /**
+     * create table in database
+     */
     public void createTable(){
         Connection c = null;
         Statement stmt = null;
@@ -41,6 +46,9 @@ public class database {
 //        System.out.println("Table created successfully");
     }
 
+    /**
+     * insert data in table
+     */
     public void insertTable(){
         Connection c = null;
         Statement stmt = null;
@@ -93,6 +101,9 @@ public class database {
 //        System.out.println("Records created successfully");
     }
 
+    /**
+     * get the whole information of specific person with known condition
+     */
     public ArrayList<String> getTable(String entername){
         ArrayList<String> result = new ArrayList<String>();
         Connection c = null;
@@ -133,6 +144,13 @@ public class database {
         return result;
     }
 
+    /**
+     * update person info, add reminder message to him
+     * @param who : person name
+     * @param notice : reminder messafe
+     * @throws ClassNotFoundException
+     * @throws SQLException
+     */
     public void update(String who , String notice) throws ClassNotFoundException, SQLException {
         Connection c = null;
         Statement stmt = null;
@@ -159,9 +177,9 @@ public class database {
 //        db = new database();
 //        db.insertTable();
 //        db = new database();
-//        db.update("mike" , "give my money back");
+//        db.update("mike" , "rick from TaipeiTrip : give my money back");
 //        db = new database();
-//        ArrayList<String> rs = db.getTable("mike");
+        ArrayList<String> rs = db.getTable("mike");
 //        System.out.println(rs);
 //        System.out.println(rs.get(3));
 //        System.out.println(rs.get(3).equals(""));
