@@ -1,0 +1,12 @@
+1. Procfile must put in the same root as manage.py
+2. in Procfile write web: gunicorn backend.wsgi (where segi.py file belong)
+3. all the module import in the project must list in requirement.txt
+4. Heroka only support fer python version, check the web site to find out 
+
+steps
+0. heroku git:remote -a <app_name>
+1. git add .
+2. git commit
+3. git push heroku master
+4. heroku ps:scale web=1
+5. heroku open
