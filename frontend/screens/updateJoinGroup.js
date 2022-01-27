@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text } from 'react-native'
+import { View, Text,Alert } from 'react-native'
 import globalvalue from '../global';
 
 export default function updateJoinGroup(mode, Gid, UserData) {
@@ -20,22 +20,37 @@ export default function updateJoinGroup(mode, Gid, UserData) {
         })
         .then(resp => resp.json())
         .catch(error => console.log('error', error.message)) 
-
-
     }
-    const updateUser = (jGroup) => {
+
+    const updateUser = (jGroup, mode) => {
+
+        let updateBody = {}
+        if(mode === "CREATE"){
+            updateBody = {Uname : UserData.Uname, Uid : UserData.Uname, joinedGroup : [...UserData.joinedGroup, jGroup], Umessage : ""}
+        }
+
+        else if (mode === "ADD"){
+            UserData = jGroup.Udata;
+            jGroup = jGroup.GData;
+            updateBody = {Uname : UserData.Uname, Uid : UserData.Uname, joinedGroup : [...UserData.joinedGroup, jGroup], Umessage : ""};
+        }
+        
+        else{
+            updateBody = {Uname : UserData.Uname, Uid : UserData.Uname,joinedGroup :[jGroup,jGroup], Umessage : ""}        
+        }
+
         fetch(globalvalue.url.toString() + `user-update/${UserData.Uid.toString()}/`, {
             method : "PUT",
             headers : {
                 'Content-Type' : 'application/json'
             },  
-            body : JSON.stringify({Uname : UserData.Uname, Uid : UserData.Uname, joinedGroup : [...UserData.joinedGroup, jGroup], Umessage : UserData.Umessage})
+            body : JSON.stringify(updateBody)
         })
         .then(resp => resp.json())
-        // .then(data => updateGroup(data))
-        .catch(error => Alert.alert("Error", error)) // or use ALERT import from react-native
+        .then(data => updateGroup(jGroup))
+        .catch(error => Alert.alert("Error", error.message)) // or use ALERT import from react-native
 
-        updateGroup(jGroup)
+        // updateGroup(jGroup)
     }
 
 
@@ -49,17 +64,41 @@ export default function updateJoinGroup(mode, Gid, UserData) {
         })
         .then(resp => resp.json())
         .then((data) => {jGroup = data; return jGroup})
-        .then(jGroup => updateUser(jGroup))
+        .then(jGroup => updateUser(jGroup,"CREATE"))
         .catch(error => Alert.alert('ERROR' , error.message))
     }
 
-    else{
+    else if(mode === "delete")
+    {
         fetch(globalvalue.url.toString() + "group-list/"+Gid+"/",{
-            method : "Get",
+            method : "GET",
         })
         .then(resp => resp.json())
         .then((data) => {jGroup = data; return jGroup})
-        .then(jGroup => updateUser(jGroup))
+        .then(jGroup => updateUser(jGroup, Gid))
+        .catch(error => Alert.alert('ERROR' , error.message))
+    }
+
+    else if(mode === "Add")
+    {        
+        fetch(globalvalue.url.toString() + "user-list/"+UserData+"/",{
+            method : "GET",
+        })
+        .then(resp => resp.json())
+        // .then((data) => {jGroup = {GData : Gid, Udata : data}; return jGroup}) // if add then pass Groupdata and Userdata
+        .then(data => updateUser({GData : Gid, Udata : data},"ADD"))
+        .catch(error => console.log('ERROR' , error.message))
+
+    }
+
+
+    else{
+        fetch(globalvalue.url.toString() + "group-list/"+Gid+"/",{
+            method : "GET",
+        })
+        .then(resp => resp.json())
+        .then((data) => {jGroup = data; return jGroup})
+        .then(jGroup => updateUser(jGroup,"CREATE"))
         .catch(error => Alert.alert('ERROR' , error.message))
     }
 

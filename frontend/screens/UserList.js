@@ -3,6 +3,7 @@ import { View, Text  ,FlatList,  StyleSheet, ScrollView , Alert} from 'react-nat
 import globalvalue from '../global';
 import { Provider, Card,FAB, Portal,TextInput,Button,Modal} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import updateJoinGroup from './updateJoinGroup';
 
 
 export default function Users(props) {
@@ -16,20 +17,27 @@ export default function Users(props) {
 
     const [visible, setVisible] = useState(false);
     const showModal = (target) => {setVisible(true); 
-                                   setSendtarget({'name' :target.match(/[a-zA-Z]+/g)[0], 'id' : target.match(/\d+/g)[0]});
+                                   setSendtarget({'name' :target.substr(10), 'id' : target.match(/\d+/g)[0]});
                                   }
     const hideModal = () => {setVisible(false); setSendmsg("");}
+
+
+    //for add user
+    const [JoinUser, setJoinUser] = useState("");
+    const [visibleJoin, setJoinVisible] = useState(false);
+    const showJoinModal = () => {setJoinVisible(true);}
+    const hideJoinModal = () => {setJoinVisible(false); setJoinUser("");}
   
     const renderUser = (item) => {
       return(    
         <Card style = {styles.cardstyle} onPress = {()=>showModal(item)}>
-            <Text style = {styles.textStyle1}>{item.match(/[a-zA-Z]+/g)[0]}</Text>
+            <Text style = {styles.textStyle1}>{item.substr(10)}</Text>
         </Card>
         )
     }
         
     const updateMsg = () =>{
-        const upMSG = `${current_User.Uname} from ${Groupname} said : \n ${sendMsg}`
+        const upMSG = `${current_User.Uname} from ${Groupname} said : ${sendMsg}`
 
         // console.log(globalvalue.url.toString() + "user-update/" + sendtarget.toString())
         fetch(globalvalue.url.toString() + `user-update/${sendtarget.id.toString()}/`, {
@@ -37,11 +45,11 @@ export default function Users(props) {
             headers : {
                 'Content-Type' : 'application/json'
             },  
-            body : JSON.stringify({Uname : sendtarget.name, Uid : sendtarget.id, Umessage : upMSG})
+            body : JSON.stringify({Uname : sendtarget.name, Uid : sendtarget.id, joinedGroup : [],Umessage : upMSG})
         })
         .then(resp => resp.json())
         .then(hideModal)  // send the update data back to home to update text in home screen
-        .catch(error => Alert.alert("Error", error)) // or use ALERT import from react-native
+        .catch(error => console.log("Error", error.message)) // or use ALERT import from react-native
     }
 
     const getData = async(storeKey) => {
@@ -79,15 +87,27 @@ export default function Users(props) {
                 <Button labelStyle = {{fontSize : 18,}} onPress={()=>hideModal()}>Cancel</Button>
             </View>
         </Modal>
-        
-        {/* <FAB             // foating + button
+
+        <Modal visible={visibleJoin} onDismiss={hideJoinModal} dismissable={false} contentContainerStyle={styles.messageBox}>
+            <Text style= {styles.textStyle2}>Enter User ID</Text>
+            <TextInput style = {{marginHorizontal : 10, marginTop:10}}
+                value = {JoinUser}
+                keyboardType="numeric"
+                onChangeText = {text => setJoinUser(text)}/>
+            <View style = {{flexDirection: 'row', justifyContent: "flex-end"}}>
+                <Button labelStyle = {{fontSize : 18,}} onPress={()=>{updateJoinGroup("Add",props.data, JoinUser ); hideJoinModal();}}>Add</Button>
+                <Button labelStyle = {{fontSize : 18,}} onPress={()=>hideJoinModal()}>Cancel</Button>
+            </View>
+        </Modal>
+
+        <FAB             // foating + button
             style = {styles.fab}
             small = {false}
             icon = 'plus'
-            theme = {{colors : {accent : "blue"}}}  // same as setting bgcolor in style
-            // onPress = {()=> props.navigation.navigate('Create')}
-            onPress = {()=> console.log("add user")}
-        />    */}
+            theme = {{colors : {accent : "blue"}}}  
+            onPress = {showJoinModal}
+        />    
+        
         </View>
     )    
 }

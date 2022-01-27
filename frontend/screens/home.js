@@ -12,6 +12,7 @@ import updateJoinGroup from './updateJoinGroup';
 
 
 
+
 // TODO : add message!!!
 
 export default function Home(props){
@@ -23,8 +24,11 @@ export default function Home(props){
     // const [saveID, setsaveid] = useState("")
     const [visibleid, setidVisible] = useState(false);  // for enter join group  box
     const [visiblename, setnameVisible] = useState(false); // for enter create group name ox
+
     const showModal = (func) => {func(true); }
     const hideModal = (func) => {func(false);}
+
+    const [isChange, Setischange] = useState(false)
      
 
       
@@ -45,6 +49,7 @@ export default function Home(props){
     const getUserFromDatabase = (user_id) => {
       fetch(globalvalue.url.toString() + `user-list/${user_id}/`,{
       // fetch('https://splitm.herokuapp.com/split/' + `user-list/${user_id}/`,{
+      // fetch('https://splitm.herokuapp.com/split/user-list/1181011241/',{
         method : "GET"
         })
         .then(resp => resp.json())
@@ -66,14 +71,17 @@ export default function Home(props){
     }
 
     useEffect(() => {  
-        
-      getData('@user_data')
-      .then(resp => {                          // then will wait previous function execute finish
-        console.log("get user data : ")         // in order to kepp the .then chain, previous then must return something
-        return checkUserExist(resp)})
-      // .catch(error => Alert.alert('error', error.message))
-      .catch(error => console.log('error', error.message))
-      },[props.route.params?.Uid])
+      const unsubscribe = props.navigation.addListener('focus', () => {
+        getData('@user_data')
+        .then(resp => {                          // then will wait previous function execute finish
+          console.log("get user data : ")         // in order to kepp the .then chain, previous then must return something
+          return checkUserExist(resp)})
+        // .catch(error => Alert.alert('error', error.message))
+        .catch(error => console.log('error', error.message))
+      });
+  
+      return unsubscribe;
+      },[props.route.params?.Uid, isChange])
 
     const clickItem = (Groupdata) => {
       console.log("navigate to group")
@@ -90,18 +98,20 @@ export default function Home(props){
     
     const deleteGroup = (item) => {
       Alert.alert(
-        'Delete Group?',
-        'No return after delete !',
+        'Leave this Group ?',
+        'Are u sure you want to leave ?',
         [
-        { text: "Delete", 
+        { text: "Leave", 
           style: 'destructive',
-          onPress: () => {        
-            fetch(globalvalue.url.toString() + `group-delete/${item.Gid.toString()}/`, {
-            method : "DELETE",
-            headers : {
-                'Content-Type' : 'application/json'
-                }
-              })
+          onPress: () => {    
+            updateJoinGroup('delete', item.Gid, UserData)   
+            // fetch(globalvalue.url.toString() + `group-delete/${item.Gid.toString()}/`, {
+            //   method : "DELETE",
+            //   headers : {
+            //       'Content-Type' : 'application/json'
+            //       }
+            //     });
+              Setischange(!isChange)
             } 
         },
         {
@@ -133,8 +143,6 @@ export default function Home(props){
     );
     }
 
-    
-
   
     return (
       <View style = {{flex :1,}}>
@@ -158,9 +166,14 @@ export default function Home(props){
         <Text style= {{fontSize : 18, fontWeight: "bold",}}>Enter Group ID</Text>
         <TextInput style = {{marginHorizontal : 10, marginTop:10}}
             value = {JoinID}
+            keyboardType='numeric'
             onChangeText = {text => setJoinid(text)}/>
         <View style = {{flexDirection: 'row', justifyContent: "flex-end"}}>
-            <Button labelStyle = {{fontSize : 18,}} onPress={()=>{hideModal(setidVisible); updateJoinGroup('join', JoinID, UserData); setJoinid("")} }>Join</Button>
+            <Button labelStyle = {{fontSize : 18,}} 
+                onPress={()=>{hideModal(setidVisible); 
+                          updateJoinGroup('join', JoinID, UserData); 
+                          setJoinid(""); 
+                          Setischange(!isChange)} }>Join</Button>
             <Button labelStyle = {{fontSize : 18,}} onPress={()=>hideModal(setidVisible)}>Cancel</Button>
         </View>
       </Modal>
@@ -171,7 +184,11 @@ export default function Home(props){
             value = {JoinID}
             onChangeText = {text => setJoinid(text)}/>
         <View style = {{flexDirection: 'row', justifyContent: "flex-end"}}>
-            <Button labelStyle = {{fontSize : 18,}} onPress={()=>{hideModal(setnameVisible); updateJoinGroup('create', JoinID, UserData); ; setJoinid("") } }>Create</Button>
+            <Button labelStyle = {{fontSize : 18,}} 
+                onPress={()=>{hideModal(setnameVisible);
+                              updateJoinGroup('create', JoinID, UserData);
+                              setJoinid("");
+                              Setischange(!isChange) } }>Create</Button>
             <Button labelStyle = {{fontSize : 18,}} onPress={()=>hideModal(setnameVisible)}>Cancel</Button>
         </View>
       </Modal>
@@ -184,6 +201,15 @@ export default function Home(props){
         // onPress = {()=> props.navigation.navigate('Create')}
         onPress = {()=> AddGroup()}
       />
+
+      <FAB   // show message
+        style = {{...styles.fab, bottom: 100,}}
+        small = {false}
+        icon = 'message'
+        theme = {{colors : {accent : "blue"}}}  // same as setting bgcolor in style
+        onPress = {()=> {props.navigation.navigate("messageDISP", {message : UserData.Umessage})}}
+      />
+
 
 
   </View>

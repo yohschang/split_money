@@ -31,9 +31,7 @@ export default function ActivityDetial(props) {
     const [Aname, setAname] = useState(ActivityData.Aname)
 
     let [showDropDown, setShowDropDown] = useState(false)
-    const [PaidUser, setPaidUser] = useState("")
-
-    // let PaidUser = "";
+    const [PaidUser, setPaidUser] = useState(ActivityData.APaid)
 
 
     // i create two variable for each input to store the individual value, the state variable is to rerender the page, however state variable is read only
@@ -66,7 +64,7 @@ export default function ActivityDetial(props) {
         const each_part = totalMoney / total_w;
 
         for(var i = 0 ; i< joinUser.length; i++){
-            ipl[i]  = Math.round((each_part * iwl[i] - ipl[i])*100)/100;
+            ipl[i]  = Math.round((ipl[i] -each_part * iwl[i])*100)/100;
         }
         return [ipl,iwl]
     }
@@ -76,9 +74,11 @@ export default function ActivityDetial(props) {
         pl = [...paidlist].map((p) => { if(p){return parseFloat(p)} else{return 0.0}})
         wl = [...weightlist].map((w) => { if(w){return parseFloat(w)} else{return 0.0}})
         jl = [...joinlist]
-
-        let cal_res = calculate(pl,wl,jl) // the result cause problem ///FIXXXXXXX
+        console.log(pl)
+        let cal_res = calculate([...pl],wl,jl) // the result cause problem ///FIXXXXXXX
         const fpl = cal_res[0], fwl = cal_res[1];
+
+        console.log(pl)
 
         // console.log(fpl, fwl)
 
@@ -95,10 +95,12 @@ export default function ActivityDetial(props) {
                     "Aname": Aname,
                     "Adate": ActivityData.Adate,
                     "Atime": ActivityData.Atime,
-                    "AMoney": fpl,
+                    "AMoney": pl,
                     "Aweighted": fwl,
                     "Ajoined": jl,
                     "AtotalMoney":totalMoney,
+                    "APaid" : PaidUser,
+                    "AfinalMoney" : fpl
                     }
                 ]
             }
@@ -112,10 +114,12 @@ export default function ActivityDetial(props) {
                 "activities": [
                     {
                     "Aname": Aname,
-                    "AMoney": fpl,
+                    "AMoney": pl,
                     "Aweighted": fwl,
                     "Ajoined": jl,
                     "AtotalMoney":totalMoney,
+                    "APaid" : PaidUser,
+                    "AfinalMoney" : fpl
                     }
                 ]
             }
@@ -149,7 +153,28 @@ export default function ActivityDetial(props) {
 
         e.preventDefault();  // default goback button will trigger goback function, preventDefault stop this action
 
+        console.log(Aname==="", totalMoney, PaidUser===undefined)
+        if(Aname === "" && totalMoney === 0){
+            props.navigation.dispatch(action)
+        }
 
+        else if(totalMoney === 0 || totalMoney === "" || PaidUser===undefined){
+            Alert.alert(
+                'Please enter "Total Amount" and "Paid by who"',
+                'Or click leave',
+                [
+                { text: "OK", style: 'destructive', onPress: () => {}},
+                {
+                    text: 'Leave',
+                    style: 'destructive',
+                    onPress: () =>  props.navigation.dispatch(action),  
+                },
+                ],
+                {cancelable: true,}
+            );
+        }
+
+        else{
         Alert.alert(
             'Save changes?',
             'Click outside to stay',
@@ -162,23 +187,23 @@ export default function ActivityDetial(props) {
             },
             ],
             {cancelable: true,}
-        );
+        )};
         }),
-        [props.navigation, paidlist,joinlist, weightlist,totalMoney]
+        [props.navigation, paidlist,joinlist, weightlist,totalMoney, Aname,PaidUser]
       );
     
     const render_item = () => {
         return joinUser.map((Userj) => {
             const idx = joinUser.indexOf(Userj)
             return(
-                <ScrollView key= {Userj} style ={{marginHorizontal : 20,}}>         
+                <ScrollView key= {Userj} style ={{marginHorizontal : 20,flex : 1}}>         
                 <View  style={styles.Userdetial}>
                     <View style = {{flex : 0.25}}>
-                        <Text style = {styles.Textstyle}>{Userj.match(/[a-zA-Z]+/g)[0]}</Text>
+                        <Text style = {styles.Textstyle}>{Userj.substr(10)}</Text>
                         {/* <Text style = {styles.Textstyle}>{item.item.joinUser}</Text> */}
                     </View> 
 
-                    <View style={{flexDirection: 'row', flex : 0.1}}>
+                    <View style={{flexDirection: 'row', flex : 0.05, marginLeft : -20, marginRight :10}}>
                         <Switch 
                             value={joinlist[idx]} 
                             onValueChange= {(value) => {jl = [...joinlist]; jl[idx] = value; setjoin(jl)}}
@@ -186,7 +211,7 @@ export default function ActivityDetial(props) {
 
                     </View>
                 
-                    <View style={{flexDirection: 'row', flex : 0.55}}>
+                    <View style={{flexDirection: 'row', flex : 0.6}}>
                         {/* <Switch  value={User_Json[index].join_list} onValueChange={(value) => joinActivity(value, index,item)} /> */}
 
                         <TextInput
@@ -216,7 +241,7 @@ export default function ActivityDetial(props) {
     }
 
     let PaidUserList = joinUser.map((s) => {
-        return { label:s.match(/[a-zA-Z]+/g)[0] ,value:joinUser.indexOf(s) }
+        return { label:s.substr(10) ,value:joinUser.indexOf(s) }
     });   
 
     return ( // Provider is must needed to use dropdown list
@@ -251,6 +276,7 @@ export default function ActivityDetial(props) {
                         style = {{...styles.inputstyle, width:'100%',marginTop:-20}}
                         label = "Total"
                         mode = "outlined"
+                        keyboardType='numeric'
                         value = {totalMoney.toString()}
                         onChangeText = {text => setTotalmoney(text)}
                     />  
@@ -286,7 +312,7 @@ export default function ActivityDetial(props) {
 const styles = StyleSheet.create({
     Userdetial : {
         flexDirection: 'row', 
-        flex:1, 
+        flex:0.8, 
         justifyContent: 'space-between',
         marginVertical:5,
     },

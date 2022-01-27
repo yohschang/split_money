@@ -35,8 +35,12 @@ class Activity(models.Model):
     Aname = models.CharField(max_length=200)
     Adate = datetime.utcnow().strftime('%Y%m%d')
     Atime = datetime.utcnow().strftime('%H%M%S')
+    APaid = models.IntegerField(null=True,
+                                blank=True, default=0)  # store who paid
     AMoney = ArrayField(models.FloatField(), null=True,
                         blank=True, default=g_limits)
+    AfinalMoney = ArrayField(models.FloatField(), null=True,
+                             blank=True, default=g_limits)   # final money balance of this activity
     Aweighted = ArrayField(models.FloatField(), null=True,
                            blank=True, default=g_limits)
     AtotalMoney = models.FloatField(null=True, blank=False)
@@ -47,7 +51,18 @@ class Activity(models.Model):
     def __str__(self):
         return self.Aname
 
-# in serializer if request is post or put then do the calculate funtion
+
+class ActiveUserInfo(models.Model):
+    activity = models.ForeignKey(
+        Activity, related_name='userinfo', null=True, blank=True, on_delete=models.SET_NULL)
+    UIname = models.CharField(max_length=200, null=True, blank=False)
+    UImoney = models.FloatField(null=True, blank=True, default=0.0)
+    UIweight = models.FloatField(null=True, blank=True, default=0.0)
+    UIjoin = models.BooleanField(null=True, blank=False, default=False)
+    UIfianlmoney = models.FloatField(null=True, blank=True, default=0.0)
+
+    def __str__(self):
+        return self.UIname
 
 
 class SplitUser(models.Model):

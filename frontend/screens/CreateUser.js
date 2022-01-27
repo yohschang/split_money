@@ -11,7 +11,7 @@ export default function CreateUser(props) {
     const [UserID, setUserID] = useState("")
     const id = ()=> {
         let date = new Date();
-        let id_num = `${date.getDate()}${date.getHours()}${date.getMinutes()}${date.getSeconds()}${date.getMilliseconds()}`.substring(1,13)
+        let id_num = `${date.getFullYear()}${date.getDate()}${date.getHours()}${date.getMinutes()}${date.getSeconds()}${date.getMilliseconds()}`.substring(1,11)
         return id_num
     }
 
@@ -33,7 +33,7 @@ export default function CreateUser(props) {
             body : JSON.stringify({'Uname' : Username, 'Uid' :  UserID.toString()})
         })
         .then(resp => resp.json())
-        .then(resp => storeData(resp, '@user_data'))
+        .then(resp => {storeData(resp, '@user_data'); return resp;})
         .then(resp => props.navigation.navigate({name : "Home", params : resp ,merge: true})) //  navigate to home
         .catch(error => Alert.alert('ERROR' , error.message))
     }

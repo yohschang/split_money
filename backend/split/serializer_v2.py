@@ -6,6 +6,8 @@ from .models import *
 
 limit = 20
 
+# python .\manage.py shell
+
 
 class UserInfoSerial(serializers.ModelSerializer):
 
@@ -18,22 +20,21 @@ class UserInfoSerial(serializers.ModelSerializer):
 
 
 class ActivitySerial(serializers.ModelSerializer):
-    # userinfo = UserInfoSerial(many = True, require = False)
-    # turn arrylist into json type
-    AMoney = serializers.ListField(
-        child=serializers.FloatField())  # limit 20 people per group
-    Aweighted = serializers.ListField(
-        child=serializers.FloatField())
-    AfinalMoney = serializers.ListField(
-        child=serializers.FloatField())
-    Ajoined = serializers.ListField(
-        child=serializers.BooleanField())
+    userinfo = UserInfoSerial(many=True, required=False)
+
     id = serializers.IntegerField(required=False)
 
     class Meta:
         model = Activity
         fields = ['id', 'Aname', 'Adate', 'Atime', "APaid",
-                  'AMoney', 'Aweighted', 'Ajoined', "AfinalMoney", 'AtotalMoney']
+                  'userinfo', 'AtotalMoney']
+
+        # def create(self, activity_data):
+        #     activity = Activity(**activity_data)
+        #     activity.save()
+        #     return activity
+
+        # def update()
 
 
 class GroupSerial(serializers.ModelSerializer):
@@ -48,8 +49,7 @@ class GroupSerial(serializers.ModelSerializer):
 
     class Meta:
         model = SplitGroup
-        fields = ['Gname', 'Gid', 'totalMoney',
-                  'joinedUser', 'activities']
+        fields = ['Gname', 'Gid', 'totalMoney', 'joinedUser', 'activities']
 
     def create(self, group_data):
         # print(group_data)
@@ -66,17 +66,8 @@ class GroupSerial(serializers.ModelSerializer):
         instance.Gname = input_data.get('Gname', instance.Gname)
         instance.totalMoney = input_data.get('totalMoney', instance.totalMoney)
         # print(instance.joinUsers.all())
-
-        for x in instance.joinUsers.all():
-            name = str(x.Uid)+str(x.Uname)
-            print(name)
-            print(instance.joinedUser)
-            if name not in instance.joinedUser:
-                # this will keep the order of user in current group
-                instance.joinedUser.append(name)
-            print(instance.joinedUser)
-        # instance.joinedUser = [str(x.Uid)+str(x.Uname)
-        #                        for x in instance.joinUsers.all()]
+        instance.joinedUser = [str(x.Uid)+str(x.Uname)
+                               for x in instance.joinUsers.all()]
         instance.save()
         # TODO: currently joined user need manually update, set joinedUser=userserial would be better
 
@@ -135,7 +126,7 @@ class UserSerial(serializers.ModelSerializer):
         else:
             instance.Umessage = input_data.get('Umessage')
 
-        # print(instance.joinedGroup.all())
+        print(instance.joinedGroup.all())
         instance.save()
         # TODO: currently joined user need manually update, set joinedUser=userserial would be better
 

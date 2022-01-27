@@ -15,8 +15,15 @@ export default function finalSplit(moneyList) {
 
     let SplitResult = [];
 
+
+
     let positive = moneyList.filter(m => m.value>=0)
     let negative = moneyList.filter(m => m.value<0)
+    // console.log("_____________________________")
+    // console.log(positive)
+    // console.log("_____________________________")
+    // console.log(negative)
+    // console.log("_____________________________")
 
     while(true){
 
@@ -46,8 +53,15 @@ export default function finalSplit(moneyList) {
         }
 
         moneyTable = moneyTable.map(mt => mt.map(Math.abs))
-        // console.log(moneyTable)
-        let xy = minArray(moneyTable, moneyTable.length, moneyTable[0].length)
+
+
+
+        let xy = minArray(moneyTable, moneyTable[0].length, moneyTable[1].length)
+
+        console.log("_____________________________")
+        console.log(moneyTable)
+        console.log("_____________________________")
+        console.log(xy)
 
         let cal_x = []
         let cal_y = []

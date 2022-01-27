@@ -15,9 +15,9 @@ export default function Balance(props) {
         {   
             let active = GroupData.activities[a]
             let count = 0
-            for(var m in active.AMoney)
+            for(var m in active.AfinalMoney)
             {
-                total_money[count] += active.AMoney[m] 
+                total_money[count] += active.AfinalMoney[m] 
                 count+=1
             }
         }
@@ -32,7 +32,7 @@ export default function Balance(props) {
         if (m !== 0 )
         {return( 
             <View style = {{flexDirection: 'row', margin : 5}}>
-                <Text style = {{flex:0.4, fontSize:22, fontWeight:"bold",textAlign: "center"}}>{GroupData.joinedUser[i].match(/[a-zA-Z]+/g)}</Text>
+                <Text style = {{flex:0.4, fontSize:22, fontWeight:"bold",textAlign: "center"}}>{GroupData.joinedUser[i].substr(10)}</Text>
                 <Text style = {{flex:0.6, fontSize:22, fontWeight:"bold" ,textAlign: "center"}}>{Math.round(m*100)/100}</Text>
                 <Text></Text>
             </View>)
@@ -42,19 +42,23 @@ export default function Balance(props) {
     //flexDirection: 'row'
 
     const getSplit = () =>{
+        // add  if statement if no activity 
+        if (GroupData.activities.length === 0){
+        } 
+        else{
         let Split_res = finalSplit(GroupData.joinedUser.map((u,i) => {return({name : [u][0] , value :  disp_money[i]})}))
-        SetsplitResult(Split_res)
+        SetsplitResult(Split_res)}
     }
 
     let displaySplit = SplitResult.map((res,i) => {
         if (SplitResult.length !== 0 )
         {return( 
             <View style = {{flexDirection: 'row', margin : 5}}>
-                <Text style = {{...styles.textStyle, flex: 0.3}}>{res[0].match(/[a-zA-Z]+/g)}</Text>
+                <Text style = {{...styles.textStyle, flex: 0.25}}>{res[0].substr(10)}</Text>
                 <Text style = {{...styles.textStyle, flex: 0.1}}> -{`>`} </Text>
-                <Text style = {{...styles.textStyle, flex:0.3}}>{res[1].match(/[a-zA-Z]+/g)}</Text>
-                <Text style = {{...styles.textStyle, flex:0.1}}> : </Text>
-                <Text style = {{...styles.textStyle, flex: 0.2}}>{Math.round(res[2]*100)/100}</Text>
+                <Text style = {{...styles.textStyle, flex:0.25}}>{res[1].substr(10)}</Text>
+                <Text style = {{...styles.textStyle, flex:0.05}}> : </Text>
+                <Text style = {{...styles.textStyle, flex: 0.35}}>{Math.round(res[2]*100)/100}</Text>
             </View>)
         }
     }); 
@@ -108,7 +112,7 @@ const styles = StyleSheet.create({
     textStyle : 
     {
         flex:1,
-        fontSize:22, 
+        fontSize:20, 
         fontWeight:"bold",
         textAlign: "center"
     }
