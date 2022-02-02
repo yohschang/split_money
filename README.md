@@ -3,7 +3,8 @@
 - Django RESTful API -> backend folder
 - React Native App UI -> frontend folder
 
-![](https://i.imgur.com/rEgtNR9.png =300x) ![](https://i.imgur.com/75cPQMF.png =300x)
+<img src="https://i.imgur.com/rEgtNR9.png" width=30% height=30%> <img src="https://i.imgur.com/75cPQMF.png" width=30% height=30%>
 
-![](https://i.imgur.com/Ugcu50S.png =300x) ![](https://i.imgur.com/fteJXek.png =300x)
+<img src="https://i.imgur.com/Ugcu50S.png" width=30% height=30%> <img src="https://i.imgur.com/fteJXek.png" width=30% height=30%>
+
 
