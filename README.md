@@ -1,6 +1,7 @@
 # This is a App for Group to split money
 ## Contains two part
 - Django RESTful API -> backend folder
+  - Deploy to Heroku : https://splitm.herokuapp.com/split/group-list/
 - React Native App UI -> frontend folder
 
 APK file download link : https://expo.dev/artifacts/4facabb2-b489-48c3-b25c-1a993b44912c
